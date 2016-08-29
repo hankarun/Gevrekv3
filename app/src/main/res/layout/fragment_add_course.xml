@@ -1,0 +1,28 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin">
+
+    <EditText
+        android:id="@+id/groupSearchEdit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableStart="?attr/search_icon"
+        android:drawableEnd="?attr/clear_icon"
+        android:hint="@string/search"
+        android:focusable="false" />
+
+    <ListView
+        android:id="@+id/allGroupsList"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/groupSearchEdit"
+        android:layout_marginTop="10dp" />
+
+</RelativeLayout>

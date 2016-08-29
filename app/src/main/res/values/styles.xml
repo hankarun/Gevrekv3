@@ -1,0 +1,24 @@
+<resources>
+    <attr name="clear_icon" format="reference"/>
+    <attr name="search_icon" format="reference"/>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowContentTransitions">true</item>
+        <item name="clear_icon" >@drawable/ic_clear_black_24dp</item>
+        <item name="search_icon" >@drawable/ic_search_black_24dp</item>
+    </style>
+
+    <style name="AppTheme.Dark" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimaryInverse</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkInverse</item>
+        <item name="colorAccent">@color/colorAccentInverse</item>
+        <item name="android:windowContentTransitions">true</item>
+        <item name="clear_icon" >@drawable/ic_clear_white_24dp</item>
+        <item name="search_icon" >@drawable/ic_search_white_24dp</item>
+    </style>
+
+</resources>

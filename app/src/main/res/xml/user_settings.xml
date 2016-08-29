@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="Tema Ayarları" >
+        <ListPreference
+            android:key="@string/pref_dark_theme"
+            android:title="Güncel tema"
+            android:summary="%s"
+            android:entries="@array/themeNames"
+            android:entryValues="@array/themeValues"
+            />
+    </PreferenceCategory>
+
+</PreferenceScreen>
