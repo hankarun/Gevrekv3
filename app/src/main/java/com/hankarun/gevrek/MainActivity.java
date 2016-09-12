@@ -167,7 +167,7 @@ public class MainActivity extends BaseAppcompat implements LoaderManager.LoaderC
     @Override
     public void onDialogReturn() {
         if(mLoginSnackBar  != null)
-            mGlobalSnackBar.dismiss();
+            mLoginSnackBar.dismiss();
         onPageRefreshed();
     }
 

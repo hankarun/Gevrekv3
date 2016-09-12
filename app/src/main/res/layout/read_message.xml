@@ -91,7 +91,8 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/scrollView">
+        android:id="@+id/scrollView"
+        android:layout_marginBottom="40dp">
 
         <TextView
             android:layout_width="match_parent"
@@ -102,16 +103,10 @@
             android:layout_margin="8dp"
             android:gravity="top|fill_vertical"
             android:layout_gravity="top"
-            android:textAlignment="gravity" />
+            android:textAlignment="gravity"
+            android:autoLink="web"
+            android:paddingBottom="10dp" />
 
     </ScrollView>
-
-    <ProgressBar
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:id="@+id/progressBar"
-        android:layout_gravity="center" />
 
 </LinearLayout>

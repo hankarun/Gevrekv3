@@ -158,7 +158,7 @@ public class GroupMessagesFragment extends Fragment implements LoaderManager.Loa
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getActivity().getSupportLoaderManager().restartLoader(1,null,GroupMessagesFragment.this);
+                getActivity().getSupportLoaderManager().restartLoader(5,null,GroupMessagesFragment.this);
             }
         });
 
@@ -257,6 +257,8 @@ public class GroupMessagesFragment extends Fragment implements LoaderManager.Loa
                     return new CowAsyncPoster(getContext(),
                             (HashMap<String, String>) args.getSerializable("params"),
                             "https://cow.ceng.metu.edu.tr/News/post.php");
+            case 5:
+                return new GroupMessagesLoader(getContext(),groupUrl, true);
         }
         return null;
     }
@@ -264,6 +266,8 @@ public class GroupMessagesFragment extends Fragment implements LoaderManager.Loa
     @Override
     public void onLoadFinished(Loader loader, Object data) {
         switch (loader.getId()) {
+            case 5:
+                mAdapter.clearData();
             case 1:
                 GroupMessagesLoader.DataStore loaderData = (GroupMessagesLoader.DataStore) data;
                 int pageSize;
@@ -408,6 +412,11 @@ public class GroupMessagesFragment extends Fragment implements LoaderManager.Loa
                 return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(rowLayout, parent, false));
 
             return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.waiting_row, parent, false));
+        }
+
+        void clearData()
+        {
+            list.clear();
         }
 
         void setData(ArrayList<GroupMessage> data, int _pageCount) {
