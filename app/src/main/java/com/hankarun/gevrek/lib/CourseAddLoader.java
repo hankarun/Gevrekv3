@@ -1,6 +1,7 @@
 package com.hankarun.gevrek.lib;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.hankarun.gevrek.model.CowCourse;
 
@@ -29,7 +30,10 @@ public class CourseAddLoader extends CowAsyncLoader<ArrayList<CourseEdit>> {
 
         ArrayList<CourseEdit> courseList = new ArrayList<>();
         Elements courseNames = doc.select("table.cow").select("tr");
-        for (int x = 4; x < courseNames.size(); ++x) {
+
+        String semester = doc.select("select[name=selector_courses_semester] option[selected]").val();
+
+        for (int x = 3; x < courseNames.size(); ++x) {
             Elements singles = courseNames.get(x).select("td");
             String courseCode = singles.get(0).text();
             for (CowCourse course : studentList) {
@@ -37,6 +41,7 @@ public class CourseAddLoader extends CowAsyncLoader<ArrayList<CourseEdit>> {
                     CourseEdit tempCourse = new CourseEdit();
                     tempCourse.mCourseCode = singles.get(0).text();
                     tempCourse.mCourseName = singles.get(1).text();
+                    tempCourse.semester = semester;
                     courseList.add(tempCourse);
                     break;
                 }

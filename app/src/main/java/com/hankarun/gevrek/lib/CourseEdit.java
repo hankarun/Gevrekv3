@@ -6,4 +6,6 @@ public class CourseEdit extends CowCourse
 {
     public boolean mChecked;
     public boolean mDisabled;
+
+    public String semester;
 }

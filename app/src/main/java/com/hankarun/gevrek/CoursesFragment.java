@@ -29,7 +29,6 @@ import butterknife.ButterKnife;
 
 public class CoursesFragment extends MainBaseFragment{
     @BindView(R.id.newsGroupRecycle) RecyclerView mRecyclerView;
-    @BindView(R.id.newsgroupSwipe) SwipeRefreshLayout mSwipeRefreshLayout;
 
     CowCourseAdapter mAdapter;
 
@@ -49,14 +48,6 @@ public class CoursesFragment extends MainBaseFragment{
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(mAdapter);
 
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mRefreshCallback.onPageRefreshed();
-            }
-        });
-
-        mSwipeRefreshLayout.setRefreshing(true);
         return view;
     }
 

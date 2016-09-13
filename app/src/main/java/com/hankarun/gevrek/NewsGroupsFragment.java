@@ -35,8 +35,6 @@ import butterknife.ButterKnife;
 
 public class NewsGroupsFragment extends MainBaseFragment{
     @BindView(R.id.newsGroupRecycle) RecyclerView mRecyclerView;
-    @BindView(R.id.newsgroupSwipe) SwipeRefreshLayout mSwipeRefreshLayout;
-
     private NewsGroupsAdapter mAdapter;
 
     public NewsGroupsFragment()
@@ -61,14 +59,6 @@ public class NewsGroupsFragment extends MainBaseFragment{
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(mAdapter);
 
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mRefreshCallback.onPageRefreshed();
-            }
-        });
-
-        mSwipeRefreshLayout.setRefreshing(true);
         return view;
     }
 

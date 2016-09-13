@@ -3,7 +3,9 @@ package com.hankarun.gevrek;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -24,6 +26,7 @@ import android.widget.TextView;
 
 import com.hankarun.gevrek.lib.CourseAddLoader;
 import com.hankarun.gevrek.lib.CourseEdit;
+import com.hankarun.gevrek.lib.CowAsyncPoster;
 import com.hankarun.gevrek.model.CowCourse;
 import com.hankarun.gevrek.model.CowMessage;
 
@@ -66,12 +69,29 @@ public class AddCourseFragment extends Fragment implements LoaderManager.LoaderC
 
     @Override
     public Loader onCreateLoader(int id, Bundle args) {
-        return new CourseAddLoader(getContext());
+        switch (id) {
+            case 1:
+                return new CourseAddLoader(getContext());
+            case 4:
+                return new CowAsyncPoster(getContext(),
+                        (HashMap<String, String>) args.getSerializable("params"),
+                        "https://cow.ceng.metu.edu.tr/Student/courses.php?task_courses_student=add");
+            default:
+                return null;
+        }
     }
 
     @Override
     public void onLoadFinished(Loader loader, Object data) {
-        mAdapter.setData((ArrayList<CourseEdit>) data);
+        switch (loader.getId())
+        {
+            case 1:
+                mAdapter.setData((ArrayList<CourseEdit>) data);
+                break;
+            case 4:
+                getActivity().finish();
+                break;
+        }
     }
 
     @Override
@@ -160,18 +180,20 @@ public class AddCourseFragment extends Fragment implements LoaderManager.LoaderC
             return view;
         }
 
-        private void addCourse(CowCourse course)
+        private void addCourse(CourseEdit course)
         {
-            /*Map<String,String> params = new HashMap<>();
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            String username = prefs.getString("username", "");
+            Map<String,String> params = new HashMap<>();
             params.put("username",username);
             params.put("course", course.mCourseCode);
-            params.put("semester", semester);
+            params.put("semester", course.semester);
             params.put("task_courses_student","add");
             params.put("author", username);
-            params.put("locked", locked);
+            params.put("locked", "no");
             Bundle args = new Bundle();
             args.putSerializable("params", (Serializable) params);
-            getActivity().getSupportLoaderManager().initLoader(4,args,this);*/
+            getActivity().getSupportLoaderManager().initLoader(4,args,AddCourseFragment.this);
         }
 
         @Override

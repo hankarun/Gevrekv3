@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -16,12 +17,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.CookieManager;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
 
 import com.hankarun.gevrek.lib.CourseDetailLoader;
+import com.hankarun.gevrek.lib.CowAsyncLoader;
 import com.hankarun.gevrek.model.CourseDetail;
 
 import butterknife.BindView;
@@ -116,12 +119,19 @@ public class FragmentCourseDetails extends Fragment implements LoaderManager.Loa
             private class HelloWebViewClient extends WebViewClient {
                 @Override
                 public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+                    if (Build.VERSION.SDK_INT >= 21) {
+                        // AppRTC requires third party cookies to work
+                        CookieManager cookieManager = CookieManager.getInstance();
+                        cookieManager.setAcceptThirdPartyCookies(view, true);
+                        cookieManager.setAcceptCookie(true);
+                    }
+                    view.loadUrl(url, CowAsyncLoader.cookieMap);
+                    /*SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
                     String username = prefs.getString("username", "");
                     String password = prefs.getString("password", "");
                     Uri uri = Uri.parse(url + "&cow_username="+username+"&cow_password="+password+"&cow_login=Login");
                     Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                    startActivity(intent);
+                    startActivity(intent);*/
                     return true;
                 }
             }
