@@ -23,9 +23,10 @@ public class LoginDialog extends Dialog implements Button.OnClickListener {
         void onDialogReturn();
     }
 
-    public LoginDialog(Context context) {
-        super(context, android.R.style.Theme_Holo_Light_NoActionBar);
+    public LoginDialog(Context context, int theme) {
+        super(context, theme);
         this.context = context;
+
         setContentView(R.layout.login_dialog);
         getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
         (findViewById(R.id.btn_login)).setOnClickListener(this);

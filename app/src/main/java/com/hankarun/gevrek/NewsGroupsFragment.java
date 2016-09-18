@@ -7,7 +7,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.hankarun.gevrek.lib.NewsGroupLoader;
 import com.hankarun.gevrek.model.NewsGroup;
 
 import java.util.ArrayList;
@@ -33,7 +35,8 @@ import java.util.Vector;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class NewsGroupsFragment extends MainBaseFragment{
+public class NewsGroupsFragment extends MainBaseFragment implements LoaderManager.LoaderCallbacks<LinkedHashMap<String, Vector<NewsGroup>>>{
+
     @BindView(R.id.newsGroupRecycle) RecyclerView mRecyclerView;
     private NewsGroupsAdapter mAdapter;
 
@@ -59,6 +62,8 @@ public class NewsGroupsFragment extends MainBaseFragment{
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(mAdapter);
 
+        onLoadFragment();
+
         return view;
     }
 
@@ -83,7 +88,7 @@ public class NewsGroupsFragment extends MainBaseFragment{
                             {
                                 @Override
                                 public void onClick(View view) {
-                                    new LoginDialog(getActivity());
+                                    new LoginDialog(getActivity(), ((BaseAppcompat)getActivity()).getCurrentTheme());
                                 }
                             })
                             .show();
@@ -94,11 +99,30 @@ public class NewsGroupsFragment extends MainBaseFragment{
     }
 
     @Override
-    public void onloadFinished(Object _data) {
-        LinkedHashMap<String, Vector<NewsGroup>> data = (LinkedHashMap<String, Vector<NewsGroup>>) _data;
-        //mSwipeRefreshLayout.setRefreshing(false);
-        if(data != null)
-            mAdapter.setData(data);
+    public void onRefreshFragment()
+    {
+        getActivity().getSupportLoaderManager().restartLoader(0,null,this);
+    }
+
+    @Override
+    public void onLoadFragment()
+    {
+        getActivity().getSupportLoaderManager().initLoader(0, null, this);
+    }
+
+    @Override
+    public Loader onCreateLoader(int id, Bundle args) {
+        return new NewsGroupLoader(getContext());
+    }
+
+    @Override
+    public void onLoadFinished(Loader<LinkedHashMap<String, Vector<NewsGroup>>> loader, LinkedHashMap<String, Vector<NewsGroup>> data) {
+        mAdapter.setData(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader loader) {
+
     }
 
     public class NewsGroupsAdapter extends RecyclerView.Adapter<NewsGroupsAdapter.ViewHolder> {

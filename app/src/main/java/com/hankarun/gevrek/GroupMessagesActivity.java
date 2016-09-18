@@ -60,7 +60,7 @@ public class GroupMessagesActivity extends BaseAppcompat implements View.OnClick
                     .setAction("Login in.", new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            new LoginDialog(GroupMessagesActivity.this).show();
+                            new LoginDialog(GroupMessagesActivity.this, getCurrentTheme()).show();
                         }
                     }).show();
         }

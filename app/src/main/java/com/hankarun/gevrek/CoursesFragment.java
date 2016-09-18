@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.hankarun.gevrek.lib.CowCourseListLoader;
 import com.hankarun.gevrek.model.CowCourse;
 
 import java.util.ArrayList;
@@ -27,7 +30,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class CoursesFragment extends MainBaseFragment{
+public class CoursesFragment extends MainBaseFragment implements LoaderManager.LoaderCallbacks<ArrayList<CowCourse>>{
     @BindView(R.id.newsGroupRecycle) RecyclerView mRecyclerView;
 
     CowCourseAdapter mAdapter;
@@ -47,6 +50,8 @@ public class CoursesFragment extends MainBaseFragment{
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(mAdapter);
+
+        onLoadFragment();
 
         return view;
     }
@@ -70,8 +75,31 @@ public class CoursesFragment extends MainBaseFragment{
     }
 
     @Override
-    public void onloadFinished(Object _data) {
-        mAdapter.setData((ArrayList<CowCourse>) _data);
+    public void onRefreshFragment()
+    {
+        getActivity().getSupportLoaderManager().restartLoader(1,null,this);
+    }
+
+    @Override
+    public void onLoadFragment()
+    {
+        getActivity().getSupportLoaderManager().initLoader(1, null, this);
+    }
+
+    @Override
+    public Loader onCreateLoader(int id, Bundle args) {
+        return new CowCourseListLoader(getContext());
+    }
+
+    @Override
+    public void onLoadFinished(Loader<ArrayList<CowCourse>> loader, ArrayList<CowCourse> data) {
+        mAdapter.setData((ArrayList<CowCourse>) data);
+    }
+
+
+    @Override
+    public void onLoaderReset(Loader loader) {
+
     }
 
     public class CowCourseAdapter extends RecyclerView.Adapter<CowCourseAdapter.ViewHolder> {

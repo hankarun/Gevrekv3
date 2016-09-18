@@ -10,22 +10,18 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.hankarun.gevrek.lib.CowCourseListLoader;
-import com.hankarun.gevrek.lib.NewsGroupLoader;
-
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 
-public class MainActivity extends BaseAppcompat implements LoaderManager.LoaderCallbacks, onPageRefreshed, LoginDialog.onDialogFinished {
+public class MainActivity extends BaseAppcompat implements onPageRefreshed, LoginDialog.onDialogFinished {
 
     @BindView(R.id.tabs)
     TabLayout tabLayout;
@@ -35,11 +31,9 @@ public class MainActivity extends BaseAppcompat implements LoaderManager.LoaderC
     private MainBaseFragment  mFragmentNewsGroups;
     private MainBaseFragment  mFragmentCourses;
 
-    private Snackbar mGlobalSnackBar;
-    private Snackbar mLoginSnackBar;
-
     private int numberOfNetworkTries = 0;
 
+    private static WeakReference<Snackbar> snackbarReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,21 +43,25 @@ public class MainActivity extends BaseAppcompat implements LoaderManager.LoaderC
         setupToolbar();
         if(getSupportActionBar()!=null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        setupViewPager(viewPager);
-        tabLayout.setupWithViewPager(viewPager);
+
 
         if(!usernameAndPasswordSet(this)) {
-            mLoginSnackBar =  Snackbar.make(findViewById(R.id.coordinator),"You need to login.", Snackbar.LENGTH_INDEFINITE);
-            mLoginSnackBar.setAction("Login in.", new View.OnClickListener() {
+            Snackbar f =  Snackbar.make(findViewById(R.id.coordinator),"You need to login.", Snackbar.LENGTH_INDEFINITE);
+            f.setAction("Login in.", new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            new LoginDialog(MainActivity.this).show();
+                            new LoginDialog(MainActivity.this, getCurrentTheme()).show();
                         }
                     });
-            mLoginSnackBar.show();
-            new LoginDialog(this).show();
+            snackbarReference = new WeakReference<>(f);
+            f.show();
+            new LoginDialog(this, getCurrentTheme()).show();
+            setupViewPager(viewPager,1);
+            tabLayout.setupWithViewPager(viewPager);
+        }else {
+            setupViewPager(viewPager,0);
+            tabLayout.setupWithViewPager(viewPager);
         }
-        getSupportLoaderManager().initLoader(0,null,this);
     }
 
 
@@ -93,20 +91,25 @@ public class MainActivity extends BaseAppcompat implements LoaderManager.LoaderC
         return super.onOptionsItemSelected(item);
     }
 
-    private void setupViewPager(ViewPager viewPager) {
+    private void setupViewPager(ViewPager viewPager, int staus) {
         mFragmentNewsGroups = new NewsGroupsFragment();
-        mFragmentCourses = new CoursesFragment();
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(mFragmentNewsGroups, getString(R.string.newsGroups));
-        adapter.addFragment(mFragmentCourses, getString(R.string.courses));
+        if(staus==0) {
+            mFragmentCourses = new CoursesFragment();
+            adapter.addFragment(mFragmentCourses, getString(R.string.courses));
+        }
         viewPager.setAdapter(adapter);
     }
 
-    @Override
+   /* @Override
     public Loader onCreateLoader(int id, Bundle args) {
-        if(mLoginSnackBar == null) {
-            mGlobalSnackBar = Snackbar.make(findViewById(R.id.coordinator), "Loading.", Snackbar.LENGTH_INDEFINITE);
-            mGlobalSnackBar.show();
+        Snackbar currentSnackbar = getCurrentSnackbar();
+        if(currentSnackbar  == null)
+        {
+            Snackbar s = Snackbar.make(findViewById(R.id.coordinator), "Loading.", Snackbar.LENGTH_INDEFINITE);
+            snackbarReference = new WeakReference<>(s);
+            s.show();
         }
         switch (id)
         {
@@ -124,8 +127,9 @@ public class MainActivity extends BaseAppcompat implements LoaderManager.LoaderC
 
     @Override
     public void onLoadFinished(Loader loader, Object data) {
-        if(mGlobalSnackBar!=null)
-            mGlobalSnackBar.dismiss();
+        Snackbar currentSnackbar = getCurrentSnackbar();
+        if(currentSnackbar  != null)
+            currentSnackbar.dismiss();
         if(data != null)
         {
             switch (loader.getId())
@@ -143,12 +147,15 @@ public class MainActivity extends BaseAppcompat implements LoaderManager.LoaderC
         {
             if(numberOfNetworkTries < 1) {
                 numberOfNetworkTries++;
-                mGlobalSnackBar.dismiss();
-                mGlobalSnackBar = Snackbar.make(findViewById(R.id.coordinator), "Slow network. Trying again.", Snackbar.LENGTH_INDEFINITE);
-                mGlobalSnackBar.show();
+
+                Snackbar s = Snackbar.make(findViewById(R.id.coordinator), "Slow network. Trying again.", Snackbar.LENGTH_INDEFINITE);
+                snackbarReference = new WeakReference<>(s);
+                s.show();
             } else
             {
-                Snackbar.make(findViewById(R.id.coordinator), "There is something wrong with internet.", Snackbar.LENGTH_LONG).show();
+                Snackbar snack = Snackbar.make(findViewById(R.id.coordinator), "There is something wrong with internet.", Snackbar.LENGTH_LONG);
+                snackbarReference = new WeakReference<>(snack);
+                snack.show();
                 finish();
             }
         }
@@ -157,18 +164,21 @@ public class MainActivity extends BaseAppcompat implements LoaderManager.LoaderC
     @Override
     public void onLoaderReset(Loader loader) {
 
-    }
+    }*/
 
     @Override
     public void onPageRefreshed() {
-        getSupportLoaderManager().restartLoader(0,null,this);
+        //getSupportLoaderManager().restartLoader(0,null,this);
     }
 
     @Override
     public void onDialogReturn() {
-        if(mLoginSnackBar  != null)
-            mLoginSnackBar.dismiss();
-        onPageRefreshed();
+        Snackbar currentSnackbar = getCurrentSnackbar();
+        if(currentSnackbar  != null)
+            currentSnackbar.dismiss();
+
+        setupViewPager(viewPager,0);
+        tabLayout.setupWithViewPager(viewPager);
     }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {
@@ -198,5 +208,12 @@ public class MainActivity extends BaseAppcompat implements LoaderManager.LoaderC
         public CharSequence getPageTitle(int position) {
             return mFragmentTitleList.get(position);
         }
+    }
+
+    public static Snackbar getCurrentSnackbar() {
+        if (snackbarReference != null) {
+            return snackbarReference.get();
+        }
+        return null;
     }
 }

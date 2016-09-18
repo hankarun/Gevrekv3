@@ -26,6 +26,16 @@ public class MainBaseFragment extends Fragment{
         }
     }
 
+    public void onLoadFragment()
+    {
+
+    }
+
+    public void onRefreshFragment()
+    {
+
+    }
+
     public void onloadFinished(Object _data){
 
     }
